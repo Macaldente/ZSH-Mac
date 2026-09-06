@@ -12,6 +12,7 @@ MacOS dotfiles und Konfigurationsdateien für ZSH, SSH und weitere Tools.
 | `.zsh_plugins.txt` | Antidote Plugin-Liste |
 | `.zsh_plugins.zsh` | Generierte Antidote Plugin-Datei |
 | `ZSH-AUTOCOMPLETE.md` | Ladereihenfolge, `compinit`-Regel und Tastenbelegung (Tab / ↑ / Ctrl+R) |
+| `ATUIN.md` | Atuin-Setup, Antidote-Fallstrick und Nachimport der Alt-History |
 | `starship.toml` | Starship Prompt-Konfiguration |
 | `.vimrc` | Vim-Konfiguration |
 | `.nanorc` | Nano-Konfiguration |
@@ -27,6 +28,12 @@ Initiale CLI-Tools installieren:
 ```zsh
 brew install antidote atuin eza fzf genpass helix starship zoxide
 ```
+
+> **Atuin:** Direkt nach der Installation `atuin import auto` ausführen — ein
+> späterer Nachimport ist aufwendig und mit `atuin import auto` allein nicht
+> mehr sauber möglich, siehe [`ATUIN.md`](ATUIN.md).
+> Atuin **nicht** als Antidote-Plugin installieren (`atuinsh/atuin`) — Begründung
+> ebenfalls in [`ATUIN.md`](ATUIN.md).
 
 Weitere CLI-Tools:
 ```zsh
@@ -134,6 +141,12 @@ Host *
 
 ## Changelog
 
+- **2026-09-06** — [`ATUIN.md`](ATUIN.md) ergänzt: Atuin-Setup, warum `atuinsh/atuin`
+  kein Antidote-Plugin sein darf (klont 26 MB Rust-Quellcode und initialisiert Atuin
+  vor `ATUIN_NOBIND`, wodurch die <kbd>↑</kbd>-Taste an Atuin fällt), sowie das
+  Verfahren für einen nachträglichen History-Import. Ein spätes `atuin import auto`
+  dupliziert vorhandene Einträge und datiert undatierte Zeilen auf *jetzt* —
+  dokumentiert ist deshalb ein gefilterter Backfill.
 - **2026-08-16** — Repository von `ZSH-mac` in `ZSH-Mac` umbenannt (Konsistenz mit `ZSH-Linux`).
 - **2026-08-16** — `~/.atuin/bin/env`-Sourcing in `.zshrc` mit einer Existenzprüfung
   abgesichert (`[ -f "$HOME/.atuin/bin/env" ] && . "$HOME/.atuin/bin/env"`).
