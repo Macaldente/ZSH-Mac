@@ -18,7 +18,7 @@ Two things here are non-obvious and cost real time to get right:
 ~/.atuin/bin/atuin              # binary (official installer; absent with Homebrew)
 ~/.atuin/bin/env                # prepends ~/.atuin/bin to $PATH
 ~/.local/share/atuin/history.db # SQLite history database (WAL mode)
-~/.config/atuin/config.toml     # client config — copy in this repo as atuin.toml
+~/.config/atuin/config.toml     # client config — symlink into this repo
 ~/.zsh_history                  # zsh's own history — still written in parallel
 ```
 
@@ -62,8 +62,8 @@ sequences are bound: `^[[A` (normal cursor mode) and `^[OA` (application
 cursor mode, used by some terminals and full-screen programs). The Down arrow
 stays with zsh-autocomplete. See `ZSH-AUTOCOMPLETE.md` §5.2.
 
-The filter used per key is set in `~/.config/atuin/config.toml` (`atuin.toml`
-in this repo):
+The filter used per key is set in `~/.config/atuin/config.toml`
+(`.config/atuin/config.toml` in this repo):
 
 ```toml
 filter_mode_shell_up_key_binding = "host"   # Up: every command from this Mac

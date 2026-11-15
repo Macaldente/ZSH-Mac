@@ -18,10 +18,9 @@ fish_indicator = '󰈺 '
 
 [username]
 style_root = 'black bold'
-format = '[$user]($style) '
+format = '[meister ]($style) '
 disabled = false
 show_always = true
-aliases = { "my_username" = "meister " }
 
 # Nur für SSH
 [hostname]

@@ -9,6 +9,7 @@ Thumbs.db
 
 # ZSH specific
 .zsh_history
+.zsh_plugins.zsh
 .zsh_sessions/
 .zcompdump*
 

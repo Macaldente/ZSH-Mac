@@ -6,18 +6,26 @@ MacOS dotfiles und Konfigurationsdateien für ZSH, SSH und weitere Tools.
 
 ## Inhalt
 
-| Datei / Ordner | Beschreibung |
+Das Repo bildet das Home-Verzeichnis ab: Jede Datei liegt unter demselben
+relativen Pfad wie ihr Ziel in `~` und wird per `stow` dorthin verlinkt.
+
+| Datei im Repo | Beschreibung |
 |---|---|
 | `.zshrc` | ZSH-Konfiguration (Antidote-basiert) |
 | `.zsh_plugins.txt` | Antidote Plugin-Liste |
-| `.zsh_plugins.zsh` | Generierte Antidote Plugin-Datei |
-| `ZSH-AUTOCOMPLETE.md` | Ladereihenfolge, `compinit`-Regel und Tastenbelegung (Tab / ↑ / Ctrl+R) |
-| `ATUIN.md` | Atuin-Setup, Antidote-Fallstrick und Nachimport der Alt-History |
-| `starship.toml` | Starship Prompt-Konfiguration |
-| `atuin.toml` | Atuin-Konfiguration (`~/.config/atuin/config.toml`) |
+| `.config/starship.toml` | Starship Prompt-Konfiguration |
+| `.config/atuin/config.toml` | Atuin-Konfiguration |
+| `.config/ghostty/config` | Ghostty-Konfiguration |
+| `.homebrew/brew.env` | Homebrew-Umgebungsvariablen |
 | `.vimrc` | Vim-Konfiguration |
 | `.nanorc` | Nano-Konfiguration |
-| `config` | Ghostty-Konfiguration (`~/.config/ghostty/config`) |
+| `.stow-local-ignore` | Dateien, die `stow` nicht verlinkt (Doku, Git, generierte Dateien) |
+| `ZSH-AUTOCOMPLETE.md` | Ladereihenfolge, `compinit`-Regel und Tastenbelegung (Tab / ↑ / Ctrl+R) |
+| `ATUIN.md` | Atuin-Setup, Antidote-Fallstrick und Nachimport der Alt-History |
+
+`.zsh_plugins.zsh` liegt bewusst **nicht** im Repo: Antidote erzeugt die Datei
+selbst und ersetzt sie beim Neubau per `mv -f` — ein Symlink würde dabei wieder
+zur normalen Datei.
 
 ---
 
@@ -50,8 +58,19 @@ brew install --cask ghostty ungoogled-chromium raycast soundanchor timemachineed
 
 Dateien mit `stow` ins Home-Verzeichnis symlinken:
 ```zsh
-stow --target=$HOME --dir=$HOME/Git/ZSH-Mac .
+stow --no-folding --target=$HOME --dir=$HOME/Git/ZSH-Mac .
 ```
+
+`--no-folding` verlinkt nur einzelne Dateien, nie ganze Ordner. So landen
+Dateien, die Programme selbst in `~/.config/atuin` oder `~/.config/ghostty`
+anlegen, nicht versehentlich im Repo.
+
+Bereits vorhandene Dateien blockieren `stow` („cannot stow … over existing
+target“). Diese vorher sichern und aus dem Weg räumen, dann erneut ausführen.
+Mit `stow -n -v …` lässt sich vorab prüfen, was passieren würde.
+
+Weil die Dateien in `~` nur Symlinks sind, landet jede Änderung direkt im Repo
+und taucht in `git status` auf.
 
 ---
 
@@ -144,6 +163,12 @@ Host *
 
 ## Changelog
 
+- **2026-11-15** — Auf `stow`-Symlinks umgestellt. Die Dateien liegen jetzt unter
+  ihren echten Pfaden (`.config/…`, `.homebrew/brew.env`), `.stow-local-ignore`
+  hält Doku und Git-Dateien aus `~` heraus. `.zsh_plugins.zsh` aus dem Repo
+  entfernt (generiert, verträgt keinen Symlink). Starship zeigt `meister` jetzt als
+  festen Text statt über einen Benutzernamen-Alias, damit kein Benutzername im
+  Repo steht.
 - **2026-11-15** — <kbd>↑</kbd> öffnet jetzt Atuin (`atuin-up-search`) statt des
   History-Menüs von zsh-autocomplete. Für die Pfeiltaste filtert Atuin auf `host`
   (alle Befehle dieses Macs), <kbd>Ctrl</kbd>+<kbd>R</kbd> sucht weiterhin global.
