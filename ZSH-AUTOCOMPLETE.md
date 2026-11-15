@@ -105,7 +105,7 @@ Four tools compete for the same keys. Current resolution:
 |---|---|---|
 | *(typing)* | zsh-autocomplete live menu | — |
 | <kbd>Tab</kbd> | fzf-tab | `fzf-tab-complete` |
-| <kbd>↑</kbd> | zsh-autocomplete history | `.autocomplete__up-line-or-search__zle-widget` |
+| <kbd>↑</kbd> | atuin (filter `host`) | `atuin-up-search` |
 | <kbd>↓</kbd> | zsh-autocomplete menu | `.autocomplete__down-line-or-select__zle-widget` |
 | <kbd>Ctrl</kbd>+<kbd>R</kbd> | atuin | `_atuin_search` |
 | <kbd>Ctrl</kbd>+<kbd>T</kbd> | fzf file picker | `fzf-file-widget` |
@@ -133,17 +133,24 @@ The `$+widgets` guard means this degrades safely if fzf-tab is ever removed.
 
 ### 5.2 Up arrow — atuin vs zsh-autocomplete
 
-By default `atuin init zsh` binds both <kbd>↑</kbd> and <kbd>Ctrl</kbd>+<kbd>R</kbd>,
-and because it initialises near the end of `~/.zshrc` it used to win both.
-`ATUIN_NOBIND` disables its entire default keymap so the arrow keys stay with
-autocomplete, then Ctrl+R is bound back manually:
+**atuin owns <kbd>↑</kbd>**; zsh-autocomplete keeps <kbd>↓</kbd>.
+`ATUIN_NOBIND` disables atuin's default keymap so nothing is bound implicitly,
+then Ctrl+R and both Up-arrow sequences are bound by hand. Because this runs
+after `antidote load`, it overrides zsh-autocomplete's history menu:
 
 ```sh
 export ATUIN_NOBIND=true
 eval "$(atuin init zsh)"
 bindkey -M emacs '^R' atuin-search
 bindkey -M viins '^R' atuin-search
+bindkey -M emacs '^[[A' atuin-up-search
+bindkey -M viins '^[[A' atuin-up-search
+bindkey -M emacs '^[OA' atuin-up-search
+bindkey -M viins '^[OA' atuin-up-search
 ```
+
+To give <kbd>↑</kbd> back to zsh-autocomplete, drop the four `atuin-up-search`
+lines.
 
 ### 5.3 Ctrl+R — atuin vs fzf
 

@@ -5,6 +5,7 @@
 # Inserts a blank line between shell prompts
 add_newline = true
 
+# Character-Konfiguration mit Error-Zustand
 [character]
 success_symbol = '[➜](bold green)'
 error_symbol = '[➜](bold red)'
@@ -16,19 +17,20 @@ nu_indicator = 'nu-shell'
 fish_indicator = '󰈺 '
 
 [username]
-style_user = 'white bold'
 style_root = 'black bold'
-format = '[$user]($style)'
+format = '[$user]($style) '
 disabled = false
 show_always = true
 aliases = { "my_username" = "meister " }
 
+# Nur für SSH
 [hostname]
 ssh_only = true
 format = 'on [$hostname](bold red) '
 trim_at = '.'
 disabled = false
 
+# Directory-Konfiguration mit besserer Darstellung
 [directory]
 truncate_to_repo = false
 truncation_length = 0
@@ -49,7 +51,7 @@ disabled = true
 
 [cmd_duration]
 min_time = 2_000
-format = ' took [$duration](bold yellow) '
+format = '  took [$duration](bold yellow) '
 
 # Status-Code anzeigen bei Fehlern
 [status]

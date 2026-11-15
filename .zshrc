@@ -116,8 +116,8 @@ ytv() {
 }
 
 # --- Nearly finished
-# Atuin: opt out of its default keymap so it cannot take the Up arrow away from
-# zsh-autocomplete's history menu. Atuin keeps Ctrl+R only.
+# Atuin: bind keys manually so they are set after zsh-autocomplete.
+# Ctrl+R and the Up arrow both open atuin instead of the zsh history.
 # ~/.atuin/bin/env only exists when atuin was installed via the official
 # install script rather than Homebrew; guard it so Homebrew-only installs
 # don't error on every shell start.
@@ -126,6 +126,10 @@ export ATUIN_NOBIND=true
 eval "$(atuin init zsh)"
 bindkey -M emacs '^R' atuin-search
 bindkey -M viins '^R' atuin-search
+bindkey -M emacs '^[[A' atuin-up-search
+bindkey -M viins '^[[A' atuin-up-search
+bindkey -M emacs '^[OA' atuin-up-search
+bindkey -M viins '^[OA' atuin-up-search
 
 # --- PATH finish
 if [[ -d /usr/local/bin/podman ]]; then

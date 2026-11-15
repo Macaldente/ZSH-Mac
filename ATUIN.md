@@ -2,7 +2,7 @@
 
 Documentation for the [Atuin](https://github.com/atuinsh/atuin) shell-history
 setup on this machine, and the exact procedure to reproduce it elsewhere.
-Last verified: **2026-09-06** (macOS, zsh 5.9, arm64, atuin 18.19.0).
+Last verified: **2026-11-15** (macOS, zsh 5.9, arm64, atuin 18.19.0).
 
 Two things here are non-obvious and cost real time to get right:
 
@@ -18,7 +18,7 @@ Two things here are non-obvious and cost real time to get right:
 ~/.atuin/bin/atuin              # binary (official installer; absent with Homebrew)
 ~/.atuin/bin/env                # prepends ~/.atuin/bin to $PATH
 ~/.local/share/atuin/history.db # SQLite history database (WAL mode)
-~/.config/atuin/config.toml     # client config, if present
+~/.config/atuin/config.toml     # client config — copy in this repo as atuin.toml
 ~/.zsh_history                  # zsh's own history — still written in parallel
 ```
 
@@ -38,8 +38,8 @@ atuin import auto                     # DO THIS NOW — see §4 if you forgot
 Activation lives at the **end** of `~/.zshrc`, after `antidote load`:
 
 ```zsh
-# Atuin: opt out of its default keymap so it cannot take the Up arrow away from
-# zsh-autocomplete's history menu. Atuin keeps Ctrl+R only.
+# Atuin: bind keys manually so they are set after zsh-autocomplete.
+# Ctrl+R and the Up arrow both open atuin instead of the zsh history.
 # ~/.atuin/bin/env only exists when atuin was installed via the official
 # install script rather than Homebrew; guard it so Homebrew-only installs
 # don't error on every shell start.
@@ -48,12 +48,31 @@ export ATUIN_NOBIND=true
 eval "$(atuin init zsh)"
 bindkey -M emacs '^R' atuin-search
 bindkey -M viins '^R' atuin-search
+bindkey -M emacs '^[[A' atuin-up-search
+bindkey -M viins '^[[A' atuin-up-search
+bindkey -M emacs '^[OA' atuin-up-search
+bindkey -M viins '^[OA' atuin-up-search
 ```
 
 `ATUIN_NOBIND=true` must be exported **before** `atuin init zsh` runs. It
-suppresses Atuin's entire default keymap — including its Up-arrow binding,
-which would otherwise displace `zsh-autocomplete`'s history menu. Ctrl+R is
-then bound back by hand. See `ZSH-AUTOCOMPLETE.md` §5.2.
+suppresses Atuin's entire default keymap, so nothing is bound implicitly.
+Ctrl+R and the Up arrow are then bound by hand, *after* `antidote load`, which
+is what lets them override `zsh-autocomplete`'s history menu. Both Up-arrow
+sequences are bound: `^[[A` (normal cursor mode) and `^[OA` (application
+cursor mode, used by some terminals and full-screen programs). The Down arrow
+stays with zsh-autocomplete. See `ZSH-AUTOCOMPLETE.md` §5.2.
+
+The filter used per key is set in `~/.config/atuin/config.toml` (`atuin.toml`
+in this repo):
+
+```toml
+filter_mode_shell_up_key_binding = "host"   # Up: every command from this Mac
+# filter_mode stays unset (= global)        # Ctrl+R and autosuggestions
+```
+
+`atuin init zsh` also registers itself as the first `zsh-autosuggestions`
+strategy (`ZSH_AUTOSUGGEST_STRATEGY=(atuin history)`), so the grey inline
+suggestions come from Atuin too, with `~/.zsh_history` only as a fallback.
 
 ---
 
@@ -83,11 +102,11 @@ rm -f ~/.zsh_plugins.zsh          # force Antidote to rebuild its static bundle
 exec zsh
 ```
 
-Verify afterwards — Up must belong to zsh-autocomplete, Ctrl+R to Atuin:
+Verify afterwards — Up and Ctrl+R must both belong to Atuin:
 
 ```zsh
 grep -c atuin ~/.zsh_plugins.zsh   # expect 0
-bindkey '^[[A'                     # expect up-line-or-search
+bindkey '^[[A'                     # expect atuin-up-search
 bindkey '^R'                       # expect atuin-search
 ```
 
@@ -357,7 +376,7 @@ In an interactive shell:
 echo $ATUIN_NOBIND               # true
 zle -la | grep -c atuin          # widgets registered
 print $precmd_functions          # exactly one _atuin_precmd, no duplicates
-bindkey '^R'; bindkey '^[[A'     # atuin-search / up-line-or-search
+bindkey '^R'; bindkey '^[[A'     # atuin-search / atuin-up-search
 ```
 
 Spot-check that a legacy command really came across — use `full-text`, since the

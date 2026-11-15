@@ -14,9 +14,10 @@ MacOS dotfiles und Konfigurationsdateien für ZSH, SSH und weitere Tools.
 | `ZSH-AUTOCOMPLETE.md` | Ladereihenfolge, `compinit`-Regel und Tastenbelegung (Tab / ↑ / Ctrl+R) |
 | `ATUIN.md` | Atuin-Setup, Antidote-Fallstrick und Nachimport der Alt-History |
 | `starship.toml` | Starship Prompt-Konfiguration |
+| `atuin.toml` | Atuin-Konfiguration (`~/.config/atuin/config.toml`) |
 | `.vimrc` | Vim-Konfiguration |
 | `.nanorc` | Nano-Konfiguration |
-| `config` | Weitere Konfigurationsdateien |
+| `config` | Ghostty-Konfiguration (`~/.config/ghostty/config`) |
 
 ---
 
@@ -89,7 +90,8 @@ export ZSH_COMPDUMP="${ZDOTDIR:-$HOME}/.cache/zsh/zcompdump"
 |---|---|---|
 | *(Tippen)* | zsh-autocomplete Live-Menü | — |
 | <kbd>Tab</kbd> | fzf-tab | `fzf-tab-complete` |
-| <kbd>↑</kbd> / <kbd>↓</kbd> | zsh-autocomplete | `up-line-or-search` / `down-line-or-select` |
+| <kbd>↑</kbd> | atuin (Filter `host`) | `atuin-up-search` |
+| <kbd>↓</kbd> | zsh-autocomplete | `down-line-or-select` |
 | <kbd>Ctrl</kbd>+<kbd>R</kbd> | atuin | `_atuin_search` |
 | <kbd>Ctrl</kbd>+<kbd>T</kbd> / <kbd>Alt</kbd>+<kbd>C</kbd> | fzf | `fzf-file-widget` / `fzf-cd-widget` |
 
@@ -98,7 +100,8 @@ Zwei Konflikte werden in `.zshrc` aufgelöst:
 - `eval "$(fzf --zsh)"` läuft **nach** `antidote load` und belegt <kbd>Tab</kbd> mit
   `fzf-completion`. Die Belegung wird danach an `fzf-tab` zurückgegeben.
 - `atuin init zsh` belegt standardmäßig <kbd>↑</kbd> **und** <kbd>Ctrl</kbd>+<kbd>R</kbd>.
-  `ATUIN_NOBIND=true` deaktiviert das Keymap; <kbd>Ctrl</kbd>+<kbd>R</kbd> wird manuell gesetzt.
+  `ATUIN_NOBIND=true` deaktiviert das Keymap; <kbd>Ctrl</kbd>+<kbd>R</kbd> und <kbd>↑</kbd>
+  werden danach manuell gesetzt und überschreiben so das History-Menü von zsh-autocomplete.
 
 > **Merkregel:** Jedes Tool, das `bindkey` ausführt (fzf, atuin, mcfly, navi),
 > kollidiert mit zsh-autocomplete, wenn es nach `antidote load` initialisiert.
@@ -141,6 +144,12 @@ Host *
 
 ## Changelog
 
+- **2026-11-15** — <kbd>↑</kbd> öffnet jetzt Atuin (`atuin-up-search`) statt des
+  History-Menüs von zsh-autocomplete. Für die Pfeiltaste filtert Atuin auf `host`
+  (alle Befehle dieses Macs), <kbd>Ctrl</kbd>+<kbd>R</kbd> sucht weiterhin global.
+  Atuin-Konfiguration als `atuin.toml` ins Repo aufgenommen, versehentlich
+  eingecheckte Terminal-Ausgabe `ghostty` entfernt, `config` und `starship.toml`
+  mit dem aktiven Stand abgeglichen.
 - **2026-09-06** — [`ATUIN.md`](ATUIN.md) ergänzt: Atuin-Setup, warum `atuinsh/atuin`
   kein Antidote-Plugin sein darf (klont 26 MB Rust-Quellcode und initialisiert Atuin
   vor `ATUIN_NOBIND`, wodurch die <kbd>↑</kbd>-Taste an Atuin fällt), sowie das
