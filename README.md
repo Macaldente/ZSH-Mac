@@ -19,6 +19,7 @@ relativen Pfad wie ihr Ziel in `~` und wird per `stow` dorthin verlinkt.
 | `.homebrew/brew.env` | Homebrew-Umgebungsvariablen |
 | `.vimrc` | Vim-Konfiguration |
 | `.nanorc` | Nano-Konfiguration |
+| `.stowrc` | Standard-Optionen für `stow` (Repo-Pfad, Ziel `~`, `--no-folding`) |
 | `.stow-local-ignore` | Dateien, die `stow` nicht verlinkt (Doku, Git, generierte Dateien) |
 | `ZSH-AUTOCOMPLETE.md` | Ladereihenfolge, `compinit`-Regel und Tastenbelegung (Tab / ↑ / Ctrl+R) |
 | `ATUIN.md` | Atuin-Setup, Antidote-Fallstrick und Nachimport der Alt-History |
@@ -56,10 +57,17 @@ brew install --cask ghostty ungoogled-chromium raycast soundanchor timemachineed
 
 ### Dotfiles einrichten
 
-Dateien mit `stow` ins Home-Verzeichnis symlinken:
+Dateien mit `stow` ins Home-Verzeichnis symlinken — im Repo-Ordner:
 ```zsh
-stow --no-folding --target=$HOME --dir=$HOME/Git/ZSH-Mac .
+cd ~/Git/ZSH-Mac
+stow .
 ```
+
+Die Optionen kommen aus `.stowrc` (`--dir=~/Git/ZSH-mac`, `--target=~`,
+`--no-folding`). `stow` liest die Datei beim ersten Lauf aus dem aktuellen
+Ordner und verlinkt sie dabei selbst nach `~/.stowrc` — danach funktioniert
+`stow .` aus jedem Ordner. Liegt das Repo woanders, `--dir` in `.stowrc`
+anpassen.
 
 `--no-folding` verlinkt nur einzelne Dateien, nie ganze Ordner. So landen
 Dateien, die Programme selbst in `~/.config/atuin` oder `~/.config/ghostty`
@@ -163,6 +171,8 @@ Host *
 
 ## Changelog
 
+- **2026-11-15** — `.stowrc` ergänzt: `stow .` genügt, die Optionen müssen nicht
+  mehr von Hand angegeben werden.
 - **2026-11-15** — Auf `stow`-Symlinks umgestellt. Die Dateien liegen jetzt unter
   ihren echten Pfaden (`.config/…`, `.homebrew/brew.env`), `.stow-local-ignore`
   hält Doku und Git-Dateien aus `~` heraus. `.zsh_plugins.zsh` aus dem Repo
