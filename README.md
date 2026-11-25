@@ -32,6 +32,14 @@ zur normalen Datei.
 
 ## Installation
 
+> **Nur auf macOS verwenden.** Die Linux-Variante liegt in
+> [`ZSH-Linux`](https://github.com/Macaldente/ZSH-Linux), deren
+> Installationsschritte (`cp .zshrc .zsh_plugins.txt ~/`) auf dem Mac **nicht**
+> ausführen: Weil `~/.zshrc` hier ein `stow`-Symlink ist, würde `cp` den
+> Linux-Inhalt direkt in dieses Repo schreiben. Beide `.zshrc` haben deshalb
+> ganz oben einen OS-Wächter, der das Laden auf dem falschen System mit einer
+> Meldung abbricht. Wiederherstellen mit `git restore .zshrc .zsh_plugins.txt`.
+
 ### Voraussetzungen
 
 Initiale CLI-Tools installieren:
@@ -170,6 +178,10 @@ Host *
 ---
 
 ## Changelog
+
+- **2026-11-25** — OS-Wächter am Anfang der `.zshrc`: auf einem Nicht-macOS-System
+  bricht das Laden mit einer Meldung ab (Gegenstück in `ZSH-Linux`). Hinweis in
+  der Installation, die Linux-Schritte nicht auf dem Mac auszuführen.
 
 - **2026-11-15** — `.stowrc` ergänzt: `stow .` genügt, die Optionen müssen nicht
   mehr von Hand angegeben werden.
