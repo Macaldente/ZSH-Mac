@@ -71,7 +71,7 @@ cd ~/Git/ZSH-Mac
 stow .
 ```
 
-Die Optionen kommen aus `.stowrc` (`--dir=~/Git/ZSH-mac`, `--target=~`,
+Die Optionen kommen aus `.stowrc` (`--dir=~/Git/ZSH-Mac`, `--target=~`,
 `--no-folding`). `stow` liest die Datei beim ersten Lauf aus dem aktuellen
 Ordner und verlinkt sie dabei selbst nach `~/.stowrc` — danach funktioniert
 `stow .` aus jedem Ordner. Liegt das Repo woanders, `--dir` in `.stowrc`
@@ -179,6 +179,9 @@ Host *
 
 ## Changelog
 
+- **2026-11-25** — Lokalen Ordner von `~/Git/ZSH-mac` in `~/Git/ZSH-Mac` umbenannt, damit er
+  zum Repo-Namen passt (wurde beim Rename am 2026-08-16 nur auf GitHub geändert).
+  `.stowrc`, README und Wächter-Meldung angepasst, `stow`-Symlinks neu gesetzt.
 - **2026-11-25** — OS-Wächter am Anfang der `.zshrc`: auf einem Nicht-macOS-System
   bricht das Laden mit einer Meldung ab (Gegenstück in `ZSH-Linux`). Hinweis in
   der Installation, die Linux-Schritte nicht auf dem Mac auszuführen.

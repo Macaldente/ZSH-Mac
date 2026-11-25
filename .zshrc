@@ -3,7 +3,7 @@
 # ======================
 
 # --- OS-Wächter: diese .zshrc ist nur für macOS (Linux-Version: Repo ZSH-Linux)
-[[ $OSTYPE == darwin* ]] || { print -P "%F{red}ZSH-mac/.zshrc ist nur für macOS – Laden abgebrochen (\$OSTYPE=$OSTYPE).%f"; return 1 }
+[[ $OSTYPE == darwin* ]] || { print -P "%F{red}ZSH-Mac/.zshrc ist nur für macOS – Laden abgebrochen (\$OSTYPE=$OSTYPE).%f"; return 1 }
 
 # --- PATH initializer
 export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:$PATH"
