@@ -125,7 +125,7 @@ ytv() {
 #   newpost <repo> "Titel"   z. B. newpost join-linux "Fedora 45 ist da"
 #   newpost "Titel"          wenn man schon im Repo steht
 # Legt content/blog/<slug>.md als Entwurf an, startet `zola serve --drafts`
-# im Hintergrund (Browser öffnet sich), öffnet $EDITOR und beendet den
+# im Hintergrund (Browser öffnet sich), öffnet Helix (hx) und beendet den
 # Server, sobald der Editor geschlossen wird.
 newpost() {
   emulate -L zsh
@@ -161,6 +161,7 @@ newpost() {
   cat > $file <<EOF
 +++
 title = "$qtitle"
+slug = "${(L)$(uuidgen)[1,8]}"
 date = $(print -P '%D{%Y-%m-%d}')
 description = ""
 draft = true
@@ -182,7 +183,7 @@ EOF
     grep -m3 -i error $log
     read -sk1 '?Weiter mit beliebiger Taste …'; print
   fi
-  ${=EDITOR:-nano} $file
+  hx $file
   kill $pid 2>/dev/null
 
   print -P "Veröffentlichen: %F{yellow}draft = false%f setzen, dann"
