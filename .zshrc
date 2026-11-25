@@ -115,6 +115,34 @@ ytv() {
     yt-dlp -t mp4 "$@"
 }
 
+# git look: zeigt, ob es Updates vom Remote gibt (Dry-Run für git pull)
+#   im Repo   -> prüft nur dieses Repo
+#   außerhalb -> prüft alle Repos in ~/Git
+git() {
+  if [[ "$1" == "look" ]]; then
+    local repos r n
+    if command git rev-parse --is-inside-work-tree &>/dev/null; then
+      repos=("$(command git rev-parse --show-toplevel)")
+    else
+      repos=(~/Git/*/.git(N:h))
+    fi
+    for r in $repos; do
+      command git -C "$r" fetch -q 2>/dev/null
+      n=$(command git -C "$r" rev-list --count HEAD..@{u} 2>/dev/null)
+      if [[ -z "$n" ]]; then
+        print -P "%F{yellow}${r:t}%f: kein Upstream"
+      elif (( n > 0 )); then
+        print -P "%F{red}${r:t}%f: $n neue Commits"
+        command git -C "$r" log --oneline HEAD..@{u} | sed 's/^/    /'
+      else
+        print -P "%F{green}${r:t}%f: aktuell"
+      fi
+    done
+  else
+    command git "$@"
+  fi
+}
+
 # --- Nearly finished
 # Atuin: bind keys manually so they are set after zsh-autocomplete.
 # Ctrl+R and the Up arrow both open atuin instead of the zsh history.
