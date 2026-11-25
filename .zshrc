@@ -121,6 +121,82 @@ ytv() {
     yt-dlp -t mp4 "$@"
 }
 
+# neuer Blogpost in einem Zola-Repo unter ~/Git (reading, join-linux, …)
+#   newpost <repo> "Titel"   z. B. newpost join-linux "Fedora 45 ist da"
+#   newpost "Titel"          wenn man schon im Repo steht
+# Legt content/blog/<slug>.md als Entwurf an, startet `zola serve --drafts`
+# im Hintergrund (Browser öffnet sich), öffnet $EDITOR und beendet den
+# Server, sobald der Editor geschlossen wird.
+newpost() {
+  emulate -L zsh
+  setopt extended_glob
+  local base=~/Git repo top
+  local -a repos=($base/*/content/blog(N/:h:h:t))
+
+  if [[ -n $1 && -d $base/$1/content/blog ]]; then
+    repo=$base/$1; shift
+  elif top=$(git rev-parse --show-toplevel 2>/dev/null) && [[ -d $top/content/blog ]]; then
+    repo=$top
+  else
+    print -u2 "Aufruf: newpost <repo> \"Titel\"  (Repos: ${(j:, :)repos})"
+    return 1
+  fi
+
+  local title=$*
+  [[ -z $title ]] && { print -u2 "Bitte einen Titel angeben."; return 1 }
+
+  # Titel -> URL-Slug: klein, Umlaute umschreiben, alles andere zu "-"
+  local slug=${(L)title}
+  slug=${slug//ä/ae}; slug=${slug//ö/oe}; slug=${slug//ü/ue}; slug=${slug//ß/ss}
+  slug=${slug//[^a-z0-9]##/-}
+  slug=${${slug#-}%-}
+
+  local qtitle=${title//\"/\\\"}   # " im Titel für TOML maskieren
+  local file=$repo/content/blog/$slug.md
+  if [[ -e $file ]]; then
+    print -u2 "Gibt es schon: $file"
+    return 1
+  fi
+
+  cat > $file <<EOF
++++
+title = "$qtitle"
+date = $(print -P '%D{%Y-%m-%d}')
+description = ""
+draft = true
+[taxonomies]
+tags = []
++++
+
+EOF
+
+  cd $repo || return 1
+  print -P "%F{green}Angelegt:%f content/blog/$slug.md"
+
+  local pid log=${TMPDIR:-/tmp}/newpost-zola.log
+  zola serve --drafts --open &>$log &!
+  pid=$!
+  sleep 1
+  if ! kill -0 $pid 2>/dev/null; then
+    print -P "%F{red}zola serve ist abgebrochen%f (Vorschau fehlt, Datei ist trotzdem angelegt):"
+    grep -m3 -i error $log
+    read -sk1 '?Weiter mit beliebiger Taste …'; print
+  fi
+  ${=EDITOR:-nano} $file
+  kill $pid 2>/dev/null
+
+  print -P "Veröffentlichen: %F{yellow}draft = false%f setzen, dann"
+  print    "  git add content/blog/$slug.md && git commit -m \"Neuer Post '$title'\" && git push"
+}
+
+# Tab-Vervollständigung: erstes Argument = Zola-Repo unter ~/Git
+_newpost() {
+  (( CURRENT == 2 )) || return 1
+  local -a repos=(~/Git/*/content/blog(N/:h:h:t))
+  _describe 'Repo' repos
+}
+compdef _newpost newpost
+
 # --- Nearly finished
 # Atuin: bind keys manually so they are set after zsh-autocomplete.
 # Ctrl+R and the Up arrow both open atuin instead of the zsh history.
