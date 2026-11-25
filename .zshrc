@@ -81,6 +81,8 @@ alias eza='eza -a --group-directories-first --icons=always'
 alias ezal='eza -l'
 alias ezaa='eza -a --group-directories-first --icons=always'
 alias ezla='eza -la'
+# zola: Vorschau mit Entwürfen im Hintergrund, Log in /tmp/zola.log
+alias zserve='zola serve --drafts -O &>/tmp/zola.log &!'
 
 # -------------
 # own functions
