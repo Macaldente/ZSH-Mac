@@ -148,3 +148,6 @@ export LC_ALL=en_US.UTF-8
 # Load local secrets (API keys, etc.)
 [ -f ~/.secrets ] && source ~/.secrets
 # --- End of .zshrc ++++++++
+
+# rmpc startet/beendet mpd automatisch (siehe ~/.local/bin/music)
+alias rmpc='music'
